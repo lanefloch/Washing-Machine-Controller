@@ -1,0 +1,245 @@
+esphome:
+  name: "washing-machine-controller"
+  on_loop:
+    then:
+      if:
+        condition: 
+          wifi.connected: 
+        then:
+        - display.page.show: !lambda |-
+            if (id(washing_machine_timer_active).state == "active") {
+              return id(page1);
+            } else {
+              return id(page2);
+            }
+        else:
+          display.page.show: page3
+
+        
+
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Esphome-Web-372570"
+    password: "uuFFlpB6U2iY"
+
+captive_portal:
+
+
+i2c:
+  sda: GPIO21
+  scl: GPIO22
+
+#font:
+#  - file: "ComicSansMS3.ttf"
+#    id: my_font
+#    size: 20
+
+font:
+  - file: "gfonts://IBM+Plex+Sans@700"
+    id: my_font
+    size: 18
+
+  - file: "gfonts://IBM+Plex+Sans@700"
+    id: my_font2
+    size: 30
+
+  - file: "gfonts://IBM+Plex+Sans@700"
+    id: my_font3
+    size: 16
+
+sensor:
+  - platform: rotary_encoder
+    id: rot
+    name: "Rotary Encoder"
+    pin_a: GPIO26
+    pin_b: GPIO25
+    restore_mode: RESTORE_DEFAULT_ZERO
+    publish_initial_value: True
+    min_value: 0
+    max_value: 24
+    internal: True
+
+    on_clockwise:
+      if:
+        condition: 
+          wifi.connected: 
+        then:
+        - logger.log: "wifi"  
+        - if:
+            condition:
+              lambda: 'return id(washing_machine_timer_active).state == "idle";'
+            then:
+            - logger.log: "active"
+            - homeassistant.service:
+                service: input_number.set_value
+                data:
+                  entity_id: input_number.washing_machine_delay_hours
+                  value: !lambda |-
+                    return id(rot).state;
+                #variables:
+                  #my_variable: |-
+                    #return id(rot).state;
+
+    on_anticlockwise:
+      if:
+        condition: 
+          wifi.connected: 
+        then:
+        - logger.log: "wifi"  
+        - if:
+            condition:
+              lambda: 'return id(washing_machine_timer_active).state == "idle";'
+            then:
+            - logger.log: "active"
+            - homeassistant.service:
+                service: input_number.set_value
+                data:
+                  entity_id: input_number.washing_machine_delay_hours
+                  value: !lambda |-
+                    return id(rot).state;
+                #variables:
+                 # my_variable: |-
+                  #  return id(rot).state;
+
+  - platform: homeassistant
+    id: hours
+    entity_id: input_number.washing_machine_delay_hours
+    internal: True    
+
+text_sensor:
+  - platform: homeassistant
+    id: washing_machine_timer
+    entity_id: timer.washing_machine_delay_timer
+    attribute: finishes_at
+    internal: True    
+
+  - platform: homeassistant
+    id: washing_machine_timer_active
+    entity_id: timer.washing_machine_delay_timer
+    internal: True
+
+  - platform: homeassistant
+    id: washer_status
+    entity_id: switch.washing_machine
+    internal: True 
+    filters:
+    - to_upper
+
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+
+binary_sensor:
+
+  - platform: gpio
+    pin: 
+      number: GPIO27
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    name: "Button"
+    filters:
+      - delayed_on: 10ms   
+    internal: True
+    on_press:
+      then:
+        if:
+          condition: 
+            wifi.connected: 
+          then:
+
+          - if:
+              condition:
+                lambda: 'return id(washing_machine_timer_active).state == "active";'
+              then:
+              - logger.log: "1" 
+              - homeassistant.service:
+                  service: input_button.press
+                  data:
+                    entity_id: input_button.cancel_washing_machine_delay     
+
+              else:
+              - logger.log: "2"   
+              - homeassistant.service:
+                  service: input_button.press
+                  data:
+                    entity_id: input_button.start_washing_machine_delay
+          else:
+            logger.log: "WIFI DISCONNECTED. CANNOT CALL SERVICE"
+
+        
+
+
+display:
+  - platform: ssd1306_i2c
+    model: "SSD1306 128x64"
+    address: 0x3C
+    id: screen
+    pages:
+      - id: page1
+        lambda: |-
+          if (id(washing_machine_timer_active).state == "active") {
+            struct tm tm_finish{}, tm_ha_time{};
+            time_t t_helper;
+            double remain;
+            int remain_h, remain_m, remain_s;
+            
+            strptime(id(washing_machine_timer).state.c_str(), "%Y-%m-%dT%T", &tm_finish); // Convert string to time struct
+            t_helper = mktime(&tm_finish) - (8*3600);  // Convert to time_t and add 1 hour (correct for your timezone)
+
+            tm_ha_time = id(homeassistant_time).now().to_c_tm(); // Get current time in a tm struct
+            
+            remain = difftime(t_helper, mktime(&tm_ha_time)); // Calculate difference in seconds
+            
+            remain_h = (int) remain/3600;
+            remain_m = (int) (remain - 3600*remain_h)/60;
+            remain_s = (int) remain - 3600*remain_h - 60*remain_m; 
+            it.printf(it.get_width()/2, 5, id(my_font), TextAlign::CENTER, "DELAYED:");
+            it.printf(it.get_width()/2, 25, id(my_font), TextAlign::CENTER, "%02d:%02d:%02d", remain_h, remain_m, remain_s);
+            it.printf(it.get_width()/2, 50, id(my_font3), TextAlign::CENTER, "WASHER: %s", id(washer_status).state.c_str());
+            }
+            else
+              it.printf(0, 5, id(my_font), " "); 
+              it.printf(0, 25, id(my_font), " ");
+              it.printf(0, 50, id(my_font), " ");
+
+     
+
+      - id: page2
+        lambda: |-
+          if (id(washing_machine_timer_active).state == "active") {
+              it.printf(0, 5, id(my_font), " "); 
+              it.printf(0, 28, id(my_font), " ");
+              it.printf(0, 56, id(my_font), " ");
+              }
+              else{
+              it.printf(it.get_width()/2, 5, id(my_font), TextAlign::CENTER, "DELAY HRS");
+              it.printf(it.get_width()/2, 28, id(my_font2), TextAlign::CENTER, "- %.2f +", id(hours).state);
+              it.printf(it.get_width()/2, 56, id(my_font3), TextAlign::CENTER, "WASHER: %s", id(washer_status).state.c_str());
+              }
+                    
+      - id: page3
+        lambda: |-
+              it.printf(it.get_width()/2, 30, id(my_font), TextAlign::CENTER, "NO SIGNAL");
+
+
