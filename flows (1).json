@@ -1,0 +1,483 @@
+[
+    {
+        "id": "f319dea2da5c0ad3",
+        "type": "tab",
+        "label": "Washing Machine",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "d7297993aa50539b",
+        "type": "junction",
+        "z": "f319dea2da5c0ad3",
+        "x": 2020,
+        "y": 260,
+        "wires": [
+            [
+                "8e32d71c29ad067b"
+            ]
+        ]
+    },
+    {
+        "id": "103aab51d660bad6",
+        "type": "junction",
+        "z": "f319dea2da5c0ad3",
+        "x": 1400,
+        "y": 160,
+        "wires": [
+            [
+                "f8265e16cacc4284"
+            ]
+        ]
+    },
+    {
+        "id": "8e81d6bc902cfea2",
+        "type": "server-state-changed",
+        "z": "f319dea2da5c0ad3",
+        "name": "",
+        "server": "f81ccf92.4fb96",
+        "version": 4,
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "entityidfilter": "input_button.start_washing_machine_delay",
+        "entityidfiltertype": "exact",
+        "outputinitially": false,
+        "state_type": "str",
+        "haltifstate": "",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "outputs": 1,
+        "output_only_on_state_change": true,
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "ignorePrevStateNull": true,
+        "ignorePrevStateUnknown": true,
+        "ignorePrevStateUnavailable": true,
+        "ignoreCurrentStateUnknown": false,
+        "ignoreCurrentStateUnavailable": false,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            },
+            {
+                "property": "data",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "eventData"
+            },
+            {
+                "property": "topic",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "triggerId"
+            }
+        ],
+        "x": 230,
+        "y": 120,
+        "wires": [
+            [
+                "bb6995c7487b93f6"
+            ]
+        ]
+    },
+    {
+        "id": "bb6995c7487b93f6",
+        "type": "api-call-service",
+        "z": "f319dea2da5c0ad3",
+        "name": "Turn Off Washing Machine",
+        "server": "f81ccf92.4fb96",
+        "version": 5,
+        "debugenabled": false,
+        "domain": "switch",
+        "service": "turn_off",
+        "areaId": [],
+        "deviceId": [
+            "22c0cd3c34b4cd12ded23edcabee15fe"
+        ],
+        "entityId": [],
+        "data": "",
+        "dataType": "jsonata",
+        "mergeContext": "",
+        "mustacheAltTags": false,
+        "outputProperties": [],
+        "queue": "none",
+        "x": 600,
+        "y": 120,
+        "wires": [
+            [
+                "e8b112085d0d0034"
+            ]
+        ]
+    },
+    {
+        "id": "f8265e16cacc4284",
+        "type": "trigger",
+        "z": "f319dea2da5c0ad3",
+        "name": "",
+        "op1": "1",
+        "op2": "1",
+        "op1type": "str",
+        "op2type": "str",
+        "duration": "250",
+        "extend": false,
+        "overrideDelay": true,
+        "units": "hr",
+        "reset": "",
+        "bytopic": "all",
+        "topic": "topic",
+        "outputs": 2,
+        "x": 1650,
+        "y": 160,
+        "wires": [
+            [],
+            [
+                "8e32d71c29ad067b"
+            ]
+        ]
+    },
+    {
+        "id": "8e32d71c29ad067b",
+        "type": "api-call-service",
+        "z": "f319dea2da5c0ad3",
+        "name": "Turn On Washing Machine",
+        "server": "f81ccf92.4fb96",
+        "version": 5,
+        "debugenabled": false,
+        "domain": "switch",
+        "service": "turn_on",
+        "areaId": [],
+        "deviceId": [
+            "22c0cd3c34b4cd12ded23edcabee15fe"
+        ],
+        "entityId": [],
+        "data": "",
+        "dataType": "jsonata",
+        "mergeContext": "",
+        "mustacheAltTags": false,
+        "outputProperties": [],
+        "queue": "none",
+        "x": 1960,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e8b112085d0d0034",
+        "type": "api-current-state",
+        "z": "f319dea2da5c0ad3",
+        "name": "",
+        "server": "f81ccf92.4fb96",
+        "version": 3,
+        "outputs": 1,
+        "halt_if": "",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "entity_id": "input_number.washing_machine_delay_hours",
+        "state_type": "num",
+        "blockInputOverrides": false,
+        "outputProperties": [
+            {
+                "property": "delay",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            },
+            {
+                "property": "data",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entity"
+            }
+        ],
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "override_topic": false,
+        "state_location": "payload",
+        "override_payload": "msg",
+        "entity_location": "data",
+        "override_data": "msg",
+        "x": 980,
+        "y": 120,
+        "wires": [
+            [
+                "118ca09e9053b0f2",
+                "287c830ebac0f649"
+            ]
+        ]
+    },
+    {
+        "id": "b4abe309d3a862c3",
+        "type": "server-state-changed",
+        "z": "f319dea2da5c0ad3",
+        "name": "",
+        "server": "f81ccf92.4fb96",
+        "version": 4,
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "entityidfilter": "input_button.cancel_washing_machine_delay",
+        "entityidfiltertype": "exact",
+        "outputinitially": false,
+        "state_type": "str",
+        "haltifstate": "",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "outputs": 1,
+        "output_only_on_state_change": true,
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": false,
+        "ignoreCurrentStateUnavailable": false,
+        "outputProperties": [
+            {
+                "property": "reset",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "date"
+            },
+            {
+                "property": "data",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "eventData"
+            },
+            {
+                "property": "topic",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "triggerId"
+            }
+        ],
+        "x": 1100,
+        "y": 260,
+        "wires": [
+            [
+                "194ca5dcf6e3770f",
+                "103aab51d660bad6",
+                "0e687a71e139c060"
+            ]
+        ]
+    },
+    {
+        "id": "118ca09e9053b0f2",
+        "type": "function",
+        "z": "f319dea2da5c0ad3",
+        "name": "function 1",
+        "func": "var a = msg.delay * 3600000\nmsg.delay = a\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1340,
+        "y": 120,
+        "wires": [
+            [
+                "f8265e16cacc4284",
+                "f18ed50e6ad206b7"
+            ]
+        ]
+    },
+    {
+        "id": "dd8d7080832fbcf8",
+        "type": "trigger",
+        "z": "f319dea2da5c0ad3",
+        "name": "",
+        "op1": "1",
+        "op2": "1",
+        "op1type": "str",
+        "op2type": "str",
+        "duration": "15",
+        "extend": false,
+        "overrideDelay": false,
+        "units": "s",
+        "reset": "",
+        "bytopic": "all",
+        "topic": "topic",
+        "outputs": 2,
+        "x": 1810,
+        "y": 260,
+        "wires": [
+            [],
+            [
+                "d7297993aa50539b"
+            ]
+        ]
+    },
+    {
+        "id": "194ca5dcf6e3770f",
+        "type": "change",
+        "z": "f319dea2da5c0ad3",
+        "name": "",
+        "rules": [
+            {
+                "t": "delete",
+                "p": "reset",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1530,
+        "y": 260,
+        "wires": [
+            [
+                "dd8d7080832fbcf8"
+            ]
+        ]
+    },
+    {
+        "id": "f18ed50e6ad206b7",
+        "type": "change",
+        "z": "f319dea2da5c0ad3",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "reset",
+                "pt": "msg",
+                "to": "1",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1520,
+        "y": 220,
+        "wires": [
+            [
+                "dd8d7080832fbcf8"
+            ]
+        ]
+    },
+    {
+        "id": "0d952eee23577678",
+        "type": "api-call-service",
+        "z": "f319dea2da5c0ad3",
+        "name": "",
+        "server": "f81ccf92.4fb96",
+        "version": 5,
+        "debugenabled": false,
+        "domain": "timer",
+        "service": "start",
+        "areaId": [],
+        "deviceId": [],
+        "entityId": [
+            "timer.washing_machine_delay_timer"
+        ],
+        "data": "{\"duration\": msg.delay}",
+        "dataType": "jsonata",
+        "mergeContext": "",
+        "mustacheAltTags": false,
+        "outputProperties": [],
+        "queue": "none",
+        "x": 1560,
+        "y": 80,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "0e687a71e139c060",
+        "type": "api-call-service",
+        "z": "f319dea2da5c0ad3",
+        "name": "",
+        "server": "f81ccf92.4fb96",
+        "version": 5,
+        "debugenabled": false,
+        "domain": "timer",
+        "service": "cancel",
+        "areaId": [],
+        "deviceId": [],
+        "entityId": [
+            "timer.washing_machine_delay_timer"
+        ],
+        "data": "",
+        "dataType": "jsonata",
+        "mergeContext": "",
+        "mustacheAltTags": false,
+        "outputProperties": [],
+        "queue": "none",
+        "x": 1510,
+        "y": 320,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "287c830ebac0f649",
+        "type": "function",
+        "z": "f319dea2da5c0ad3",
+        "name": "function 2",
+        "func": "var a = msg.delay * 3600\nmsg.delay = a\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1340,
+        "y": 80,
+        "wires": [
+            [
+                "0d952eee23577678"
+            ]
+        ]
+    },
+    {
+        "id": "f81ccf92.4fb96",
+        "type": "server",
+        "name": "Home Assistant",
+        "version": 5,
+        "addon": false,
+        "rejectUnauthorizedCerts": true,
+        "ha_boolean": "y|yes|true|on|home|open",
+        "connectionDelay": true,
+        "cacheJson": true,
+        "heartbeat": false,
+        "heartbeatInterval": "30",
+        "areaSelector": "friendlyName",
+        "deviceSelector": "friendlyName",
+        "entitySelector": "friendlyName",
+        "statusSeparator": "at: ",
+        "statusYear": "hidden",
+        "statusMonth": "short",
+        "statusDay": "numeric",
+        "statusHourCycle": "h23",
+        "statusTimeFormat": "h:m",
+        "enableGlobalContextStore": true
+    }
+]
